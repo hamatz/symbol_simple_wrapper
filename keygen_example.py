@@ -1,5 +1,4 @@
 import sys
-from symbolchain.core.facade.SymFacade import SymFacade
 from utils.wallet import SimpleWallet
 
 def main(network_id, pass_phrase, key_file_name):
