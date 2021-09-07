@@ -5,9 +5,9 @@ from symbolchain.core.facade.SymFacade import SymFacade
 PUBLIC_TEST = 'public_test'
 PUBLIC = 'public'
 
-TETNET_HOST = 'sym-test-01.opening-line.jp'
+TESTNET_HOST = 'sym-test-01.opening-line.jp'
 TESTNET_TARGET_PORT = '3000'
-MAINTET_HOST = 'node.xembook.net'
+MAINNET_HOST = 'node.xembook.net'
 MAINNET_TARGET_PORT = '3000'
 
 class SymbolNetworkManager:
@@ -18,11 +18,11 @@ class SymbolNetworkManager:
         print('Initializing SymbolNetworkManager...')
         if network_id == 0:
             self._facade = SymFacade(PUBLIC_TEST)
-            self._host_name = TETNET_HOST
+            self._host_name = TESTNET_HOST
             self._target_port = TESTNET_TARGET_PORT
         else:
             self._facade = SymFacade(PUBLIC)
-            self._host_name = MAINTET_HOST
+            self._host_name = MAINNET_HOST
             self._target_port = MAINNET_TARGET_PORT
 
     def get_facade(self):
