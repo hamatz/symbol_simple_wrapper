@@ -6,6 +6,7 @@ from binascii import hexlify
 from .key_manager import KeyManager
 from .network_manager import SymbolNetworkManager
 from .message_builder import ThanksMessageBuilder
+from .mosaic_util import MosaicUtil
 
 # THanks Meter トランザクション蓄積用暫定アドレス
 THANKS_METER_SERVICE_ADDRESS = 'TANHIM3MXBR7FL6ZGE7AMEFQNZVE7Y2R3IK5C2A'
@@ -16,6 +17,7 @@ class SimpleWallet:
         self._nm = SymbolNetworkManager(network_id)
         self._facade = self._nm.get_facade()
         self._km = KeyManager(self._facade, '', pass_phrase, key_file_name)
+        self._mosaic_util = MosaicUtil()
 
     def get_my_address(self):
         my_address = self._facade.network.public_key_to_address(self._get_my_pubkey())
@@ -27,6 +29,10 @@ class SimpleWallet:
     def get_my_pubkey_string(self):
         pubkey = self._km.get_my_pubkey()
         return str(pubkey)
+
+    def get_network_address(self):
+        my_address = self._facade.network.public_key_to_address(self._get_my_pubkey())
+        return my_address
 
     def save_my_key(self, key_file_name):
         self._km.export_my_key(key_file_name)
@@ -70,6 +76,30 @@ class SimpleWallet:
         })
         return tx2
 
+    def _build_mosaic_def_tx(self, deadline, fee, duration, flags, divisibility):
+        tx3 = self._facade.transaction_factory.create({
+            'type' : 'mosaicDefinition',
+            'signer_public_key': self._km.get_my_pubkey(),
+            'deadline': deadline,
+            'fee': fee,
+            'duration' : duration,
+            'nonce' : self._mosaic_util.getNonce(),
+            'flags' : flags,
+            'divisibility' : divisibility
+        })
+        return tx3
+
+    def _build_mosaic_supply_change(self, deadline, fee, delta, action):
+        tx4 = self._facade.transaction_factory.create({
+            'type' : 'mosaicSupplyChange',
+            'signer_public_key': self._km.get_my_pubkey(),
+            'deadline': deadline,
+            'fee': fee,
+            'mosaic_id' : self._mosaic_util.gen_mosaic_id(self.get_network_address()),
+            'delta' : delta,
+            'action' : action
+        })
+        return tx4
     def _build_req_tx_msg(self, tx):
         signature = self._km.compute_signature(tx)
         tx.signature = signature.bytes
@@ -92,6 +122,20 @@ class SimpleWallet:
         json_payload = self._build_req_tx_msg(tx2)
         status = self._nm.send_tx(json_payload)
         hash = self._get_transaction_hash(tx2)
+        return (status, hash)
+
+    def send_mosaic_def_transacton(self, deadline, fee, duration, flags, divisibility):
+        tx3 = self._build_mosaic_def_tx( deadline, fee, duration, flags, divisibility)
+        json_payload = self._build_req_tx_msg(tx3)
+        status = self._nm.send_tx(json_payload)
+        hash = self._get_transaction_hash(tx3)
+        return (status, hash)
+
+    def send_mosaic_supply_change_tx(self, deadline, fee, delta, action):
+        tx4 = self._build_mosaic_supply_change(deadline, fee, delta, action)
+        json_payload = self._build_req_tx_msg(tx4)
+        status = self._nm.send_tx(json_payload)
+        hash = self._get_transaction_hash(tx4)
         return (status, hash)
 
     def get_received_transactions_with_address(self, address, page_size = 10, page_num = 1):
