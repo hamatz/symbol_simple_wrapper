@@ -37,6 +37,9 @@ class SimpleWallet:
     def save_my_key(self, key_file_name):
         self._km.export_my_key(key_file_name)
 
+    def set_mosaic_nonce(self, nonce):
+        self._mosaic_util.setNonce(nonce)
+
     def check_my_account_info_with_address(self):
         req_msg = {
             "addresses": [
