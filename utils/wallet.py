@@ -2,8 +2,9 @@ import sys
 import json
 import random
 import http.client
-from binascii import hexlify
+from binascii import hexlify, unhexlify
 from .key_manager import KeyManager
+from symbolchain.core.sym.Network import Address
 from .network_manager import SymbolNetworkManager
 from .message_builder import ThanksMessageBuilder
 from .mosaic_util import MosaicUtil
@@ -29,6 +30,13 @@ class SimpleWallet:
     def get_my_pubkey_string(self):
         pubkey = self._km.get_my_pubkey()
         return str(pubkey)
+
+    def get_hex_address(self, address):
+        target = Address(address)
+        return hexlify(target.bytes)
+
+    def get_unhexed_address(self, target):
+        return Address(unhexlify(target))
 
     def get_network_address(self):
         my_address = self._facade.network.public_key_to_address(self._get_my_pubkey())
@@ -103,6 +111,7 @@ class SimpleWallet:
             'action' : action
         })
         return tx4
+
     def _build_req_tx_msg(self, tx):
         signature = self._km.compute_signature(tx)
         tx.signature = signature.bytes
