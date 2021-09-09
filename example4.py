@@ -15,7 +15,7 @@ def main(network_id, pass_phrase, key_file_name):
     deadline = (int((datetime.datetime.today() + datetime.timedelta(hours=2)).timestamp()) - 1616694977) * 1000
     fee = 1000000
     duration = 365
-    flags = 'transferable restrictable'
+    flags = 'transferable restrictable supply_mutable'
     divisibility = 2
     result = wallet.send_mosaic_def_transacton(deadline, fee, duration, flags, divisibility)
     print(result[0])
