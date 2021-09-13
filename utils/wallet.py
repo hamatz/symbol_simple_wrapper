@@ -45,6 +45,21 @@ class SimpleWallet:
     def save_my_key(self, key_file_name):
         self._km.export_my_key(key_file_name)
 
+    def sign_tx(self, tx):
+        return self._km.sign_tx(tx)
+
+    def verify_tx(self, tx, signature):
+        return self._km.verify_tx(tx, signature)
+
+    def compute_signature(self, target):
+        return self._km.compute_signature(target)
+
+    def verify_signature(self, target, signature, pubkey):
+        return self/_km.verify_signature(target, signature, pubkey)
+
+    def hash_transaction(self, tx):
+        return self._facade.hash_transaction(tx)
+
     def set_mosaic_nonce(self, nonce):
         self._mosaic_util.setNonce(nonce)
 
@@ -113,7 +128,7 @@ class SimpleWallet:
         return tx4
 
     def _build_req_tx_msg(self, tx):
-        signature = self._km.compute_signature(tx)
+        signature = self._km.sign_tx(tx)
         tx.signature = signature.bytes
         payload = {"payload": hexlify(tx.serialize()).decode('utf8').upper()}
         json_payload = json.dumps(payload)

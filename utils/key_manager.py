@@ -27,14 +27,15 @@ class KeyManager:
 		"""
 		self._p_storage.save(key_file_name, self._private_key)
 
-	def compute_signature(self, transaction):
-		"""
-		現状は抽象化が不完全でトランザクションへの署名とイコール
-		"""
+	def sign_tx(self, transaction):
 		return self._facade.sign_transaction(self._keypair, transaction)
 
-	def verify_signature(self, transaction, signature):
-		"""
-		現状は抽象化が不完全でトランザクションへの署名の検証とイコール
-		"""
+	def verify_tx(self, transaction, signature):
 		return self._facade.verify_transaction(transaction, signature)
+
+	def compute_signature(self, target):
+		return self._keypair.sign(target)
+
+	def verify_signature(self, target, signature, pubkey):
+		verifier = SymFacade.Verifier(pubkey)
+		return verifier.verify(target, signature)
