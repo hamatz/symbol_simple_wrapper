@@ -3,6 +3,11 @@ import json
 import random
 import http.client
 from binascii import hexlify, unhexlify
+from symbolchain.core.sym.MerkleHashBuilder import MerkleHashBuilder
+from symbolchain.core.CryptoTypes import Hash256
+from symbolchain.core.CryptoTypes import PublicKey
+import sha3
+
 from .key_manager import KeyManager
 from symbolchain.core.sym.Network import Address
 from .network_manager import SymbolNetworkManager
@@ -44,6 +49,9 @@ class SimpleWallet:
 
     def save_my_key(self, key_file_name):
         self._km.export_my_key(key_file_name)
+
+    def get_pubkey_from_str(self, pubkey_str):
+        return PublicKey(unhexlify(pubkey_str))
 
     def sign_tx(self, tx):
         return self._km.sign_tx(tx)
@@ -102,6 +110,35 @@ class SimpleWallet:
         })
         return tx2
 
+    def get_thanks_tx_base(self, pubkey, target_address):
+        tmb = ThanksMessageBuilder()
+        msg_txt = tmb.build_tm_string(target_address)
+        service_address = self._facade.Address(THANKS_METER_SERVICE_ADDRESS)
+        ttx = self._facade.transaction_factory.create_embedded({
+            'type': 'transfer',
+            'signer_public_key': pubkey,
+            'recipient_address': service_address,
+            'message': bytes(1) + msg_txt.encode('utf8')
+        })
+        return ttx
+
+    def get_aggregate_tx_base(self, deadline, fee, transactions_hash, txs):
+        atx = self._facade.transaction_factory.create({
+            'type': 'aggregateComplete',
+            'signer_public_key': self._km.get_my_pubkey(),
+            'fee': fee,
+            'deadline': deadline,
+            'transactions_hash': transactions_hash,
+            'transactions': txs
+        })
+        return atx
+
+    def get_merkle_hash(self, target_txs):
+        hash_builder = MerkleHashBuilder()
+        for tx in target_txs:
+            hash_builder.update(Hash256(sha3.sha3_256(tx.serialize()).digest()))
+        return hash_builder.final()
+
     def _build_mosaic_def_tx(self, deadline, fee, duration, flags, divisibility):
         tx3 = self._facade.transaction_factory.create({
             'type' : 'mosaicDefinition',
@@ -133,6 +170,13 @@ class SimpleWallet:
         payload = {"payload": hexlify(tx.serialize()).decode('utf8').upper()}
         json_payload = json.dumps(payload)
         return json_payload
+
+    def send_tx(self, tx):
+        payload = {"payload": hexlify(tx.serialize()).decode('utf8').upper()}
+        json_payload = json.dumps(payload)
+        status = self._nm.send_tx(json_payload)
+        hash = self._get_transaction_hash(tx)
+        return (status, hash)
 
     def send_thanks_transacton(self, deadline, fee, target_address):
         tmb = ThanksMessageBuilder()
