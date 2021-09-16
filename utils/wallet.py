@@ -122,6 +122,17 @@ class SimpleWallet:
         })
         return ttx
 
+    def get_mosaic_tx_base(self, pubkey, target_address, mosaics, msg_txt):
+        t_address = self._facade.Address(target_address)
+        mtx = self._facade.transaction_factory.create_embedded({
+            'type': 'transfer',
+            'signer_public_key': pubkey,
+            'recipient_address': t_address,
+            'mosaics': mosaics,
+            'message': bytes(1) + msg_txt.encode('utf8')
+        })
+        return mtx
+
     def get_aggregate_tx_base(self, deadline, fee, transactions_hash, txs):
         atx = self._facade.transaction_factory.create({
             'type': 'aggregateComplete',
