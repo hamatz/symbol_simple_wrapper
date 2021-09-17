@@ -1,11 +1,8 @@
 import sys
 import datetime
-from utils.wallet import SimpleWallet
-
-from binascii import hexlify, unhexlify
-
-import datetime
 import time
+from binascii import hexlify, unhexlify
+from utils.wallet import SimpleWallet
 
 def main(network_id, pass_phrase, key_file_name):
 	'''

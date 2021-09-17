@@ -10,7 +10,11 @@ def main(network_id, pass_phrase, key_file_name):
     wallet.save_my_key(key_file_name)
 
 if __name__ == '__main__':
+	'''
+	秘密鍵を生成し、指定されたパスフレーズで暗号化したのち指定されたファイル名で保存する
+
     #本コードは常に新規の鍵を生成するので大事な鍵ファイル名を上書きしてしまわないよう注意
+    '''
     args = sys.argv
 
     if len(args) == 4:
