@@ -8,6 +8,11 @@ import datetime
 import time
 
 def main(network_id, pass_phrase, key_file_name):
+	'''
+	アグリゲートトランザクション送信のサンプル
+	中継サーバがトランザクション取り込みのfeeを払ってクライアントから受け取ったデータを
+	書き込むような流れをイメージ
+	'''
 
     wallet = SimpleWallet(network_id, key_file_name, pass_phrase)
     address = wallet.get_my_address()
@@ -24,7 +29,9 @@ def main(network_id, pass_phrase, key_file_name):
     bobPubkey = wallet.get_pubkey_from_str(pubkey2)
     alicePubkey = wallet.get_pubkey_from_str(pubkey)
 
+	# ユーザが指定した相手に「+1」するためのトランザクションの素を作る
     bobTx = wallet2.get_thanks_tx_base(bobPubkey, address)
+    # システム側が接続してきたユーザを「+1」するためのトランザクションの素を作る
     aliceTx = wallet2.get_thanks_tx_base(alicePubkey, address2)
     txs = [aliceTx, bobTx]
     merkle_hash = wallet.get_merkle_hash(txs)
@@ -38,11 +45,14 @@ def main(network_id, pass_phrase, key_file_name):
 
     hash = wallet.hash_transaction(aggregate).bytes
     hexlifiedHash = hexlify(hash)
+    #本当はこのハッシュ値をユーザに送信するイメージ 
     print(hexlifiedHash)
 
+	#ハッシュ値を受け取ったユーザ側で行うデジタル署名のイメージ 
     hexlifiedSignedHash = str(wallet2.compute_signature(unhexlify(hexlifiedHash)))
     print(hexlifiedSignedHash)
 
+	#ユーザから送付されたデジタル署名をアグリゲートトランザクションに付与 
     cosignature = (0, bobPubkey.bytes, unhexlify(hexlifiedSignedHash))
     aggregate.cosignatures.append(cosignature)
 
@@ -66,7 +76,7 @@ if __name__ == '__main__':
         key_file_name = args[3]
     else:
         print('Param Error')
-        print('$ example3.py <network_id> <pass_phrase> <key_file_name>')
+        print('$ example6.py <network_id> <pass_phrase> <key_file_name>')
         quit()
 
     main(network_id, pass_phrase, key_file_name)
