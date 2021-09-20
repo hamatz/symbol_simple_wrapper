@@ -6,9 +6,9 @@ PUBLIC_TEST = 'public_test'
 PUBLIC = 'public'
 
 TESTNET_HOST = 'sym-test-01.opening-line.jp'
-TESTNET_TARGET_PORT = '3000'
-MAINNET_HOST = 'node.xembook.net'
-MAINNET_TARGET_PORT = '3000'
+TESTNET_TARGET_PORT = '3001'
+MAINNET_HOST = 'node.xymfarm.com'
+MAINNET_TARGET_PORT = '3001'
 
 class SymbolNetworkManager:
     """
@@ -31,7 +31,7 @@ class SymbolNetworkManager:
     def send_accounts_info_req(self, req_msg):
         json_req_msg = json.dumps(req_msg)
         headers = {'Content-type': 'application/json'}
-        conn = http.client.HTTPConnection(self._host_name, self._target_port)
+        conn = http.client.HTTPSConnection(self._host_name, self._target_port)
         conn.request("POST", "/accounts", json_req_msg, headers)
         response = conn.getresponse()
         data = response.read()
@@ -39,7 +39,7 @@ class SymbolNetworkManager:
 
     def send_tx(self, json_payload):
         headers = {'Content-type': 'application/json'}
-        conn = http.client.HTTPConnection(self._host_name, self._target_port)
+        conn = http.client.HTTPSConnection(self._host_name, self._target_port)
         conn.request("PUT", "/transactions", json_payload,headers)
         response = conn.getresponse()
         print(response.status, response.reason)
@@ -49,7 +49,7 @@ class SymbolNetworkManager:
 
     def get_received_transactions_with_address(self, address, page_size = 10, page_num = 1):
         req_path = '/transactions/confirmed?recipientAddress=' + address + '&pageSize=' + str(page_size) + '&pageNumber=' + str(page_num)
-        conn = http.client.HTTPConnection(self._host_name, self._target_port)
+        conn = http.client.HTTPSConnection(self._host_name, self._target_port)
         conn.request("GET", req_path)
         response = conn.getresponse()
         data = response.read()
@@ -57,7 +57,7 @@ class SymbolNetworkManager:
 
     def get_sent_transactions(self, pubkey_string, page_size = 10, page_num = 1):
         req_path = '/transactions/confirmed?signerPublicKey=' + pubkey_string + '&pageSize=' + str(page_size) + '&pageNumber=' + str(page_num)
-        conn = http.client.HTTPConnection(self._host_name, self._target_port)
+        conn = http.client.HTTPSConnection(self._host_name, self._target_port)
         conn.request("GET", req_path)
         response = conn.getresponse()
         data = response.read()
@@ -65,7 +65,7 @@ class SymbolNetworkManager:
 
     def get_transaction_fee_info(self):
         req_path = '/network/fees/transaction'
-        conn = http.client.HTTPConnection(self._host_name, self._target_port)
+        conn = http.client.HTTPSConnection(self._host_name, self._target_port)
         conn.request("GET", req_path)
         response = conn.getresponse()
         data = response.read()
@@ -73,7 +73,7 @@ class SymbolNetworkManager:
 
     def get_rental_fee_info(self):
         req_path = '/network/fees/rental'
-        conn = http.client.HTTPConnection(self._host_name, self._target_port)
+        conn = http.client.HTTPSConnection(self._host_name, self._target_port)
         conn.request("GET", req_path)
         response = conn.getresponse()
         data = response.read()
@@ -81,7 +81,7 @@ class SymbolNetworkManager:
 
     def get_nw_properties_info(self):
         req_path = '/network/properties'
-        conn = http.client.HTTPConnection(self._host_name, self._target_port)
+        conn = http.client.HTTPSConnection(self._host_name, self._target_port)
         conn.request("GET", req_path)
         response = conn.getresponse()
         data = response.read()
@@ -89,7 +89,7 @@ class SymbolNetworkManager:
 
     def get_node_health_info(self):
         req_path = '/node/health'
-        conn = http.client.HTTPConnection(self._host_name, self._target_port)
+        conn = http.client.HTTPSConnection(self._host_name, self._target_port)
         conn.request("GET", req_path)
         response = conn.getresponse()
         data = response.read()
@@ -97,7 +97,7 @@ class SymbolNetworkManager:
 
     def get_node_info(self):
         req_path = '/node/info'
-        conn = http.client.HTTPConnection(self._host_name, self._target_port)
+        conn = http.client.HTTPSConnection(self._host_name, self._target_port)
         conn.request("GET", req_path)
         response = conn.getresponse()
         data = response.read()
@@ -105,7 +105,7 @@ class SymbolNetworkManager:
 
     def get_unconfirmed_txs_with_pubkey(self, pubkey_string, page_size = 10, page_num = 1):
         req_path = '/transactions/unconfirmed?signerPublicKey=' + pubkey_string + '&pageSize=' + str(page_size) + '&pageNumber=' + str(page_num)
-        conn = http.client.HTTPConnection(self._host_name, self._target_port)
+        conn = http.client.HTTPSConnection(self._host_name, self._target_port)
         conn.request("GET", req_path)
         response = conn.getresponse()
         data = response.read()
@@ -113,7 +113,7 @@ class SymbolNetworkManager:
 
     def get_transaction_status(self, hash):
         req_path = '/transactionStatus/' + hash
-        conn = http.client.HTTPConnection(self._host_name, self._target_port)
+        conn = http.client.HTTPSConnection(self._host_name, self._target_port)
         conn.request("GET", req_path)
         response = conn.getresponse()
         data = response.read()
