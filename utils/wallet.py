@@ -461,13 +461,13 @@ class SimpleWallet:
 
     def get_nw_properties_info(self):
         '''
-        ネームスペースのレンタル料金に関する情報を取得する
+        ネットワーク関連情報を取得する
         '''
         return json.loads(self._nm.get_nw_properties_info())
 
     def get_node_health_info(self):
         '''
-        ネットワーク関連情報を取得する
+        ノードの死活状況を取得する
         '''
         return json.loads(self._nm.get_node_health_info())
 
