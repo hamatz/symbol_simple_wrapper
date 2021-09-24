@@ -4,6 +4,14 @@ import json
 from utils.wallet import SimpleWallet
 
 def main(network_id, pass_phrase, key_file_name):
+	'''
+	1. 自分のアドレス、公開鍵の確認
+	2. 自分のアカウント情報（残高等）の確認
+	3. 受信した最新100までのトランザクションの確認
+	4. 現在のトランザクションfeeの確認
+	5. Thanks Meterへの「+1」メッセージの送信（自分宛）
+	6. 送信トランザクション（最新100）の確認
+	'''
     wallet = SimpleWallet(network_id, key_file_name, pass_phrase)
     address = wallet.get_my_address()
     print('Here is your address: ' , address)
