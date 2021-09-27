@@ -6,16 +6,18 @@ from utils.wallet import SimpleWallet
 import secrets
 
 def main(network_id, pass_phrase, key_file_name):
+	'''
+	時間が経ってからモザイクの総量を変更したい場合のサンプル
+	'''
     wallet = SimpleWallet(network_id, key_file_name, pass_phrase)
     address = wallet.get_my_address()
-    print('Here is your address: ' , address)
     pubkey = wallet.get_my_pubkey_string()
-    print('Here is your pubkey: ' , pubkey)
 
     deadline = (int((datetime.datetime.today() + datetime.timedelta(hours=2)).timestamp()) - 1616694977) * 1000
     fee = 1000000
     delta = 500000000
     action = 'increase'
+    # 前回発行時に利用した nonce を確認（or記録）しておく必要がある
     nonce = 1716914431
     wallet.set_mosaic_nonce(nonce)
     result = wallet.send_mosaic_supply_change_tx(deadline, fee, delta, action)
