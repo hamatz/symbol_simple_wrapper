@@ -25,7 +25,7 @@
 ## 依存関係:
 
     Python ：3.6以降
-    symbol-sdk-core-python ： (pip install symbol-sdk-core-python)
+    symbol-sdk-core-python (v.1.0.3) ： (pip install symbol-sdk-core-python)
 
 
 
